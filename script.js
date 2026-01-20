@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. อ้างอิง Element ต่างๆ
     const fullname = document.getElementById("fullname");
     const phone = document.getElementById("phone");
     const statusBox = document.getElementById("statusMessage");
@@ -6,16 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const lockOverlay = document.getElementById("lockOverlay");
     const historySection = document.getElementById("historySection");
     const historyBody = document.getElementById("historyBody");
+    const btnSave = document.getElementById("btnSave");
+    const btnReset = document.getElementById("btnReset");
 
-    // URL เว็บแอปที่ได้จากการ Deploy โค้ดในรูป image_9f915f.png
+    // 2. URL เว็บแอป (ใช้ตัวล่าสุดที่คุณส่งมา)
     const scriptURL = 'https://script.google.com/macros/s/AKfycby69houENixc-pQplsHDsu1RHkYKWuwlvF04DzG6yQfnACOAUyX8ma1o0A2TgJudd76/exec';
 
+    // ฟังก์ชันดึงข้อมูลจาก LocalStorage
     function getSavedData() {
         const data = localStorage.getItem("medicalRecords");
         return data ? JSON.parse(data) : [];
     }
 
-    // ฟังก์ชันแสดงประวัติล่าสุดเพียงรายการเดียว
+    // 3. ฟังก์ชันแสดงประวัติการรักษาล่าสุด (รายการเดียว)
     function refreshHistory() {
         const nameVal = fullname.value.trim();
         const phoneVal = phone.value.trim();
@@ -41,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // 4. ตรวจสอบการกรอกชื่อ-เบอร์เพื่อปลดล็อคฟอร์ม
     function checkIdentity() {
         if (fullname.value.trim() !== "" && phone.value.trim() !== "") {
             recordSection.classList.add("active");
@@ -50,19 +55,19 @@ document.addEventListener("DOMContentLoaded", () => {
             refreshHistory();
         } else {
             recordSection.classList.remove("active");
-            statusBox.innerHTML = "📢 กรุณากรอกชื่อและเบอร์โทรศัพท์";
+            statusBox.innerHTML = "📢 กรุณากรอกชื่อและเบอร์โทรศัพท์ เพื่อเริ่มบันทึกข้อมูล";
             statusBox.style.background = "#fff5f5";
             statusBox.style.color = "#9b1c1c";
             historySection.classList.add("hidden");
         }
     }
 
-    // ปุ่มบันทึกข้อมูล
-    document.getElementById("btnSave").addEventListener("click", async () => {
+    // 5. เหตุการณ์เมื่อกดปุ่ม "บันทึกข้อมูล"
+    btnSave.addEventListener("click", async () => {
         const symptom = document.getElementById("symptom").value;
         if (!symptom) return alert("กรุณาระบุอาการก่อนบันทึกครับ");
 
-        // ข้อมูลที่ส่งออกจะตรงกับตัวแปรใน Apps Script (image_9f915f.png)
+        // รวบรวมข้อมูลตามโครงสร้างที่ Apps Script ต้องการ
         const newRecord = {
             name: fullname.value.trim(),
             phone: phone.value.trim(),
@@ -78,39 +83,67 @@ document.addEventListener("DOMContentLoaded", () => {
             weight: document.getElementById("weight").value
         };
 
-        // บันทึกลง LocalStorage
-        let allRecords = getSavedData();
-        allRecords = allRecords.filter(r => !(r.name === newRecord.name && r.phone === newRecord.phone));
-        allRecords.push(newRecord);
-        localStorage.setItem("medicalRecords", JSON.stringify(allRecords));
-
-        statusBox.innerHTML = "⏳ กำลังบันทึกลง Google Sheets...";
-        statusBox.style.background = "#fff3cd";
+        // แสดงสถานะกำลังบันทึก
+        btnSave.disabled = true;
+        btnSave.innerText = "⏳ กำลังบันทึก...";
+        statusBox.innerHTML = "⏳ กำลังส่งข้อมูลไปยัง Google Sheets...";
 
         try {
-            // ส่งข้อมูลไปยัง Google Sheets
+            // บันทึกลง LocalStorage (แทนที่รายการเดิม)
+            let allRecords = getSavedData();
+            allRecords = allRecords.filter(r => !(r.name === newRecord.name && r.phone === newRecord.phone));
+            allRecords.push(newRecord);
+            localStorage.setItem("medicalRecords", JSON.stringify(allRecords));
+
+            // ส่งข้อมูลไปยัง Google Apps Script
             await fetch(scriptURL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(newRecord)
             });
             
-            alert("✅ บันทึกข้อมูลสำเร็จ!");
-            refreshHistory();
+            alert("✅ บันทึกข้อมูลเข้า Google Sheets สำเร็จ!");
             
-            // ล้างฟอร์ม
+            // ล้างฟอร์ม (ยกเว้นชื่อและเบอร์)
             document.querySelectorAll("#recordSection input, #recordSection select").forEach(el => {
                 if(el.id !== "fullname" && el.id !== "phone") {
                     el.value = (el.id === "rest") ? "ไม่มี" : "";
                 }
             });
+            
+            refreshHistory();
             checkIdentity(); 
         } catch (error) {
-            alert("❌ ไม่สามารถส่งข้อมูลไปยังชีตได้");
+            console.error(error);
+            alert("❌ เกิดข้อผิดพลาดทางเทคนิค แต่บันทึกในเครื่องแล้ว");
+        } finally {
+            btnSave.disabled = false;
+            btnSave.innerText = "💾 บันทึกข้อมูลการรักษา";
         }
     });
 
+    // 6. ปุ่มล้างข้อมูล (Reset)
+    if (btnReset) {
+        btnReset.addEventListener("click", () => {
+            if(confirm("คุณต้องการล้างข้อมูลที่กรอกอยู่ทั้งหมดใช่หรือไม่?")) {
+                fullname.value = "";
+                phone.value = "";
+                document.querySelectorAll("#recordSection input, #recordSection select, #recordSection textarea").forEach(el => {
+                    el.value = "";
+                });
+                checkIdentity();
+            }
+        });
+    }
+
+    // 7. Event Listeners สำหรับการพิมพ์
     fullname.addEventListener("input", checkIdentity);
     phone.addEventListener("input", checkIdentity);
-    lockOverlay.addEventListener("click", () => { alert("🚨 กรุณากรอกชื่อและเบอร์ก่อนครับ!"); fullname.focus(); });
+    
+    lockOverlay.addEventListener("click", () => {
+        if (!recordSection.classList.contains("active")) {
+            alert("🚨 กรุณากรอกชื่อและเบอร์โทรศัพท์ก่อนครับ!");
+            fullname.focus();
+        }
+    });
 });
