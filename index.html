@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบันทึกการรักษา - วิทยาลัยเทคนิคสุราษฎร์ธานี</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <img class="logo" src="https://www.srtc.ac.th/2020/images/%E0%B8%95%E0%B8%81%E0%B9%81%E0%B8%95%E0%B9%88%E0%B8%87/%E0%B8%AA%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%B2%E0%B8%82%E0%B8%AD%E0%B8%87_393004-140.png" alt="SRTC Logo">
+        <div class="title-wrapper">
+            <h1>แบบบันทึกการเข้าใช้บริการห้องพยาบาล</h1>
+            <p>วิทยาลัยเทคนิคสุราษฎร์ธานี</p>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <section class="identity-section">
+        <h2 class="section-title">1. ข้อมูลส่วนตัว</h2>
+        <div class="identity-grid">
+            <input id="fullname" type="text" placeholder="ชื่อ-นามสกุล">
+            <input id="phone" type="text" placeholder="เบอร์โทรศัพท์">
+        </div>
+        <div id="statusMessage" class="status-box">
+            📢 กรุณากรอกชื่อและเบอร์โทรศัพท์ เพื่อเริ่มบันทึกข้อมูลและตรวจสอบประวัติ
+        </div>
+    </section>
+
+    <section id="historySection" class="hidden">
+        <h2 class="section-title history-color">📜 ประวัติการรักษาย้อนหลัง (ข้อมูลที่คุณเคยบันทึก)</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>วันที่บันทึก</th>
+                        <th>อาการ</th>
+                        <th>ยาที่ได้รับ</th>
+                        <th>ชั้นปี/แผนก</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="recordSection" class="locked">
+        <div class="lock-overlay" id="lockOverlay"></div>
+        <hr class="divider">
+        <h2 class="section-title">2. ฟอร์มบันทึกการรักษา</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>เพศ</label>
+                <select id="gender"><option value="">เลือก</option><option>ชาย</option><option>หญิง</option></select>
+            </div>
+            <div class="form-group">
+                <label>แผนกวิชา</label>
+                <input type="text" id="department" placeholder="เช่น ช่างยนต์">
+            </div>
+            <div class="form-group">
+                <label>สถานะ / ชั้นปี</label>
+                <select id="level">
+                    <option value="">เลือก</option>
+                    <option>ปวช.1</option><option>ปวช.2</option><option>ปวช.3</option>
+                    <option>ปวส.1</option><option>ปวส.2</option><option>บุคลากร</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>การนอนพัก</label>
+                <select id="rest"><option>ไม่มี</option><option>มี</option></select>
+            </div>
+            <div class="form-group">
+                <label>อาการ</label>
+                <select id="symptom">
+                    <option value="">เลือกอาการหลัก</option>
+                    <option>ปวดหัว</option><option>เป็นไข้</option><option>ปวดท้อง</option><option>ทำแผล</option><option>อื่นๆ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>อาการเพิ่มเติม</label>
+                <input type="text" id="moreDetails" placeholder="ระบุอาการเพิ่มเติม">
+            </div>
+            <div class="form-group">
+                <label>ยาที่จ่าย</label>
+                <select id="medicine">
+                    <option value="">ไม่จ่ายยา</option>
+                    <option>พาราเซตามอล</option><option>ยาแก้แพ้</option><option>ยาธาตุน้ำขาว</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>อุณหภูมิ (°C)</label>
+                <input type="text" id="temp" placeholder="36.5">
+            </div>
+            <div class="form-group">
+                <label>น้ำหนัก (กก.)</label>
+                <input type="text" id="weight" placeholder="60">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-clear" id="btnReset">ล้างข้อมูล</button>
+            <button class="btn-save" id="btnSave">บันทึกข้อมูลใหม่</button>
+        </div>
+    </section>
+</div>
+
+<footer>© ระบบงานพยาบาล วิทยาลัยเทคนิคสุราษฎร์ธานี</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

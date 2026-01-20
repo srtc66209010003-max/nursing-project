@@ -1,0 +1,59 @@
+body { font-family: 'Sarabun', sans-serif; background: #f4f7f6; margin: 0; padding: 0; }
+header { background: #9b1c1c; color: white; padding: 35px 20px; }
+.header-content { max-width: 1500px; margin: 0 auto; display: flex; align-items: center; gap: 25px; }
+.logo { width: 100px; height: 100px; background: white; border-radius: 50%; padding: 5px; }
+.title-wrapper h1 { margin: 0; font-size: 28px; }
+
+.container { max-width: 1400px; width: 95%; margin: 30px auto; background: white; padding: 50px; border-radius: 20px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); position: relative; }
+.section-title { border-left: 8px solid #9b1c1c; padding-left: 15px; margin-bottom: 25px; font-size: 22px; }
+.history-color { border-color: #1e40af; color: #1e40af; }
+
+.identity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+input, select { padding: 15px; border: 1px solid #ced4da; border-radius: 10px; font-size: 16px; }
+
+.status-box { margin-top: 20px; padding: 15px; text-align: center; background: #fff5f5; border: 1px dashed #ffcfcf; border-radius: 10px; font-weight: bold; color: #9b1c1c; }
+
+.table-container { margin-top: 20px; overflow-x: auto; border-radius: 10px; border: 1px solid #eee; }
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+th { background: #1e40af; color: white; padding: 12px; text-align: left; }
+td { padding: 12px; border-bottom: 1px solid #eee; }
+
+.locked { position: relative; opacity: 0.3; filter: grayscale(1); transition: 0.3s; }
+.lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 99; cursor: not-allowed; }
+.active { opacity: 1; filter: none; }
+.active .lock-overlay { display: none; }
+
+.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 20px; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-weight: bold; }
+
+.actions { display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; }
+button { padding: 15px 35px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
+.btn-save { background: #9b1c1c; color: white; }
+.btn-clear { background: #eee; color: #444; }
+.hidden { display: none; }
+
+@media (max-width: 768px) {
+    .identity-grid, .form-grid { grid-template-columns: 1fr; }
+    .container { padding: 20px; }
+    .header-content { flex-direction: column; text-align: center; }
+}
+/* เน้นแถวบนสุด (รายการล่าสุด) ให้เด่น */
+#historyBody tr:first-child {
+    background-color: #fff9f9;
+    border-left: 5px solid #9b1c1c;
+}
+
+/* ปรับหัวตารางให้ดูเป็นทางการขึ้น */
+th {
+    background: #1e40af;
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+}
