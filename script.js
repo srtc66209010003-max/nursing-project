@@ -11,14 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnReset = document.getElementById("btnReset");
     const langBtn = document.getElementById("langBtn");
 
-    // Modal Elements
-    const btnStatMed = document.getElementById("btnStatMed");
-    const btnHistoryService = document.getElementById("btnHistoryService");
-    const modalStats = document.getElementById("modalStats");
-    const modalHistory = document.getElementById("modalHistory");
-    const statsBody = document.getElementById("statsBody");
-    const fullHistoryBody = document.getElementById("fullHistoryBody");
-
     let currentLang = "th"; // เริ่มต้นภาษาไทย
 
     // --- 1. คำแปลบนหน้าเว็บ (Interface) ---
@@ -36,16 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
             phMore: "ระบุอาการเพิ่มเติม", labelMed: "ยาที่จ่าย", labelTemp: "อุณหภูมิ (°C)",
             labelWeight: "น้ำหนัก (กก.)", btnReset: "ล้างข้อมูล", btnSave: "บันทึกข้อมูลใหม่",
             optSelect: "เลือก", optSelectDept: "เลือกแผนกวิชา", optSelectSymp: "เลือกอาการหลัก",
-            // Modals
-            statTitle: "📊 สถิติจำนวนยาที่จ่าย (รวมทั้งหมด)",
-            historyTitle: "📋 ประวัติการใช้บริการของคุณ",
-            thMedName: "ชื่อยา", thCount: "จำนวนที่จ่าย (ครั้ง)",
-            thDate: "วันที่", thSymp: "อาการ", thMed: "ยาที่ได้รับ", thDept: "แผนก",
-            loading: "กำลังโหลดข้อมูล...", noRecord: "ไม่พบประวัติ",
-            total: "รวมทั้งหมด", verifySuccess: "✅ ยืนยันตัวตนสำเร็จ: คุณ",
+            // General
+            verifySuccess: "✅ ยืนยันตัวตนสำเร็จ: คุณ",
             confirmTitle: "ตรวจสอบข้อมูล", btnConfirm: "ยืนยัน บันทึก", btnCancel: "แก้ไข",
-            saveSuccess: "บันทึกข้อมูลเรียบร้อย",
-            alertNoPhone: "กรุณากรอกเบอร์โทรศัพท์ก่อนดูประวัติ"
+            saveSuccess: "บันทึกข้อมูลเรียบร้อย"
         },
         en: {
             btnText: "TH",
@@ -60,16 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
             phMore: "Specify details", labelMed: "Dispensed Medicine", labelTemp: "Temperature (°C)",
             labelWeight: "Weight (kg)", btnReset: "Clear Form", btnSave: "Save Record",
             optSelect: "Select", optSelectDept: "Select Department", optSelectSymp: "Select Symptom",
-            // Modals
-            statTitle: "📊 Medicine Statistics (All Users)",
-            historyTitle: "📋 Your Service History",
-            thMedName: "Medicine Name", thCount: "Count",
-            thDate: "Date", thSymp: "Symptom", thMed: "Medicine", thDept: "Dept",
-            loading: "Loading data...", noRecord: "No Record Found",
-            total: "Grand Total", verifySuccess: "✅ Verified: ",
+            // General
+            verifySuccess: "✅ Verified: ",
             confirmTitle: "Confirm Details", btnConfirm: "Confirm & Save", btnCancel: "Edit",
-            saveSuccess: "Record saved successfully.",
-            alertNoPhone: "Please enter phone number first."
+            saveSuccess: "Record saved successfully."
         }
     };
 
@@ -102,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "เกลือแร่": "ORS", "ยาล้างตา": "Eye Wash", "ยาดมโป๊ยเซียน": "Inhaler", "น้ำเกลือ": "Saline Solution",
         "แอตตาซิล": "Antacil", "เคาน์เตอร์เพน 30 กรัม": "Counterpain", "เบต้าดีน": "Betadine", "แอมโมเนีย": "Ammonia",
         "ยาภูมิแพ้": "Antihistamine", "ยาลดกรด แอร์เอ็กซ์": "Air-X", "คาดรามาย-วี โลชั่น": "Calamine Lotion",
-        "ยาหม่องขาว": "White Balm", "ยาลม": "Ya-Hom (Herbal)", "พอนสแตน 500": "Ponstan 500", "คาร์บอนแก้ท้องเสีย": "Carbon",
+        "ยาหม่องขาว": "White Balm", "ยาอม": "Lozenge", "พอนสแตน 500": "Ponstan 500", "คาร์บอนแก้ท้องเสีย": "Carbon",
         "มายบาซิน โธร์ท (เหลือง) ยาแก้เจ็บคอ": "Mybacin (Yellow)", "มายบาซิน โธร์ท (ส้ม) ยาแก้เจ็บคอ": "Mybacin (Orange)",
         "ถุงมือ ชาโตรี่": "Gloves", "พลาสเตอร์ปิดแผล": "Plaster", "ยาหอม": "Ya-Hom"
     };
@@ -142,11 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- Helper Functions ---
-    window.closeModal = function(id) { document.getElementById(id).style.display = "none"; }
-    window.onclick = function(e) {
-        if (e.target == modalStats) modalStats.style.display = "none";
-        if (e.target == modalHistory) modalHistory.style.display = "none";
-    }
     function cleanPhone(num) { return num ? num.replace(/[^0-9]/g, '') : ''; }
 
     function checkIdentity() {
@@ -169,125 +144,81 @@ document.addEventListener("DOMContentLoaded", () => {
     fullname.addEventListener("input", checkIdentity);
     phone.addEventListener("input", checkIdentity);
 
-    // ==========================================
-    // 🔴 1. Statistics (แก้ให้แปลภาษา)
-    // ==========================================
-    btnStatMed.addEventListener("click", async () => {
-        modalStats.style.display = "flex";
-        statsBody.innerHTML = `<tr><td colspan="2" style="text-align:center;">${translations[currentLang].loading}</td></tr>`;
-        
-        document.querySelector("#modalStats [data-i18n='statTitle']").innerText = translations[currentLang].statTitle;
-        document.querySelector("#modalStats [data-i18n='thMedName']").innerText = translations[currentLang].thMedName;
-        document.querySelector("#modalStats [data-i18n='thCount']").innerText = translations[currentLang].thCount;
-
-        try {
-            const response = await fetch(scriptURL);
-            const data = await response.json();
-            if (data.result === "error") throw new Error(data.error);
-
-            let medCounts = {};
-            data.forEach(row => {
-                let med = row.medicine || "";
-                if(med.trim() === "" || med === "ไม่เอายา") med = "ไม่เอายา"; 
-                medCounts[med] = (medCounts[med] || 0) + 1;
-            });
-
-            let sorted = Object.keys(medCounts).map(key => ({name: key, count: medCounts[key]}))
-                                            .sort((a,b) => b.count - a.count);
-
-            statsBody.innerHTML = "";
-            let grandTotal = 0;
-
-            sorted.forEach(item => {
-                // 🔹 จุดสำคัญ: แปลชื่อยา 🔹
-                let displayName = item.name;
-                if (currentLang === 'en') {
-                    if(optionTranslations[item.name.trim()]) {
-                        displayName = optionTranslations[item.name.trim()];
-                    } else if (item.name === "ไม่เอายา") {
-                        displayName = "No Medicine";
-                    }
-                }
-                statsBody.innerHTML += `<tr><td>${displayName}</td><td style="text-align:center;">${item.count}</td></tr>`;
-                grandTotal += item.count;
-            });
-
-            statsBody.innerHTML += `<tr style="background:#fff8e1; font-weight:bold;">
-                <td style="text-align:right;">${translations[currentLang].total}</td>
-                <td style="text-align:center; color:#d32f2f;">${grandTotal}</td></tr>`;
-
-        } catch (e) {
-            statsBody.innerHTML = `<tr><td colspan="2" style="color:red; text-align:center;">Error loading data</td></tr>`;
-        }
-    });
-
-    // ==========================================
-    // 🔴 2. History (แก้ให้แปลภาษา)
-    // ==========================================
-    btnHistoryService.addEventListener("click", async () => {
-        const myPhone = cleanPhone(phone.value);
-        if(myPhone.length < 3) {
-            Swal.fire("Warning", translations[currentLang].alertNoPhone, "warning");
-            return;
-        }
-
-        modalHistory.style.display = "flex";
-        fullHistoryBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">${translations[currentLang].loading}</td></tr>`;
-
-        document.querySelector("#modalHistory [data-i18n='historyTitle']").innerText = translations[currentLang].historyTitle;
-        document.querySelector("#modalHistory [data-i18n='thDate']").innerText = translations[currentLang].thDate;
-        document.querySelector("#modalHistory [data-i18n='thSymp']").innerText = translations[currentLang].thSymp;
-        document.querySelector("#modalHistory [data-i18n='thMed']").innerText = translations[currentLang].thMed;
-        document.querySelector("#modalHistory [data-i18n='thDept']").innerText = translations[currentLang].thDept;
-
-        try {
-            const response = await fetch(scriptURL);
-            const data = await response.json();
-            if (data.result === "error") throw new Error(data.error);
-
-            const myHistory = data.filter(r => cleanPhone(r.phone.toString()) === myPhone);
-            
-            fullHistoryBody.innerHTML = "";
-            if(myHistory.length === 0) {
-                fullHistoryBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">${translations[currentLang].noRecord}</td></tr>`;
-            } else {
-                myHistory.reverse().forEach(row => {
-                    let dateShow = row.date; 
-                    let s = row.symptom || "";
-                    let m = row.medicine || "";
-                    let dep = row.dept || "";
-
-                    // 🔹 จุดสำคัญ: แปลข้อมูลประวัติ 🔹
-                    if (currentLang === 'en') {
-                        if(optionTranslations[s.trim()]) s = optionTranslations[s.trim()];
-                        if(optionTranslations[m.trim()]) m = optionTranslations[m.trim()];
-                        if(optionTranslations[dep.trim()]) dep = optionTranslations[dep.trim()];
-                    }
-
-                    fullHistoryBody.innerHTML += `<tr><td>${dateShow}</td><td>${s}</td><td>${m}</td><td>${dep}</td></tr>`;
-                });
-            }
-        } catch (e) {
-            fullHistoryBody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error loading history</td></tr>`;
-        }
-    });
-
-    // --- บันทึกข้อมูล ---
+    // --- บันทึกข้อมูล (Popup รายละเอียดครบ) ---
     btnSave.addEventListener("click", () => {
-        const symptom = document.getElementById("symptom").value;
         const name = fullname.value.trim();
+        const phoneVal = phone.value.trim();
+        const symptom = document.getElementById("symptom").value;
+        const temp = document.getElementById("temp").value;
+        const weight = document.getElementById("weight").value;
+        const moreDetails = document.getElementById("moreDetails").value;
         const t = translations[currentLang];
-        
-        if (!symptom) return Swal.fire("Warning", currentLang==='th'?"กรุณาระบุอาการหลัก":"Please select symptom", "warning");
 
-        const getTxt = (id) => { let el = document.getElementById(id); return el.options[el.selectedIndex].text; };
+        if (!symptom) return Swal.fire("Warning", currentLang === 'th' ? "กรุณาระบุอาการหลัก" : "Please select symptom", "warning");
+
+        const getTxt = (id) => { 
+            let el = document.getElementById(id); 
+            return el.selectedIndex >= 0 ? el.options[el.selectedIndex].text : "-"; 
+        };
+
+        // สร้าง HTML Popup
+        let detailsHTML = `
+            <div style="text-align: left; font-size: 0.95rem; line-height: 1.5;">
+                <hr style="margin: 0 0 15px 0; border-top: 1px dashed #ccc;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 4px; width: 40%; font-weight:bold; color:#666;">${t.phName}:</td> 
+                        <td style="padding: 4px;">${name}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 4px; font-weight:bold; color:#666;">${t.labelDept}:</td> 
+                        <td style="padding: 4px;">${getTxt('department')}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 4px; font-weight:bold; color:#666;">${t.labelLevel}:</td> 
+                        <td style="padding: 4px;">${getTxt('level')}</td>
+                    </tr>
+                     <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 4px; font-weight:bold; color:#666;">${t.labelTemp} / ${t.labelWeight}:</td> 
+                        <td style="padding: 4px;">
+                            ${temp ? temp + " °C" : "-"} / ${weight ? weight + " kg" : "-"}
+                        </td>
+                    </tr>
+                    <tr><td colspan="2" style="height:10px;"></td></tr>
+                    
+                    <tr>
+                        <td style="padding: 4px; font-weight:bold; color:#007bff;">${t.labelSymp}:</td> 
+                        <td style="padding: 4px;"><b>${getTxt('symptom')}</b></td>
+                    </tr>
+                    ${moreDetails ? `
+                    <tr>
+                        <td style="padding: 4px; font-weight:bold; color:#666; vertical-align:top;">${t.labelMore}:</td> 
+                        <td style="padding: 4px; font-style:italic;">"${moreDetails}"</td>
+                    </tr>` : ''}
+                    
+                    <tr style="background-color: #f1f8e9;">
+                        <td style="padding: 8px; font-weight:bold; color:#2e7d32;">${t.labelMed}:</td> 
+                        <td style="padding: 8px; font-weight:bold; color:#2e7d32;">${getTxt('medicine')}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 4px; font-weight:bold; color:#dc3545;">${t.labelRest}:</td> 
+                        <td style="padding: 4px; color:#dc3545;">${getTxt('rest')}</td>
+                    </tr>
+                </table>
+            </div>
+        `;
 
         Swal.fire({
-            title: t.confirmTitle, 
-            html: `<b>Name:</b> ${name}<br><b>Symptom:</b> ${getTxt('symptom')}<br><b>Med:</b> ${getTxt('medicine')}`,
-            showCancelButton: true, confirmButtonText: t.btnConfirm, cancelButtonText: t.btnCancel
+            title: t.confirmTitle,
+            html: detailsHTML,
+            width: '400px',
+            showCancelButton: true,
+            confirmButtonText: t.btnConfirm,
+            cancelButtonText: t.btnCancel,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33'
         }).then((result) => {
-            if (result.isConfirmed) executeSave(); 
+            if (result.isConfirmed) executeSave();
         });
     });
 
