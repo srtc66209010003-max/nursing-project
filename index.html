@@ -12,12 +12,6 @@
 
 <header>
     <button id="langBtn" class="lang-switch">EN</button>
-
-    <div class="top-menu">
-        <button id="btnStatMed" class="menu-btn">💊 จำนวนยา</button>
-        <button id="btnHistoryService" class="menu-btn">📋 ประวัติผู้ใช้บริการ</button>
-    </div>
-
     <div class="header-content">
         <img class="logo" src="https://www.srtc.ac.th/2020/images/%E0%B8%95%E0%B8%81%E0%B9%81%E0%B8%95%E0%B9%88%E0%B8%87/%E0%B8%AA%E0%B8%B3%E0%B9%80%E0%B8%99%E0%B8%B2%E0%B8%82%E0%B8%AD%E0%B8%87_393004-140.png" alt="SRTC Logo">
         <div class="title-wrapper">
@@ -35,7 +29,28 @@
             <input id="phone" type="tel" data-i18n-ph="phPhone" placeholder="เบอร์โทรศัพท์">
         </div>
         <div id="statusMessage" class="status-box" data-i18n="statusDefault">
-            📢 กรุณากรอกชื่อและเบอร์โทรศัพท์ เพื่อเริ่มบันทึกข้อมูล
+            📢 กรุณากรอกชื่อและเบอร์โทรศัพท์ เพื่อเริ่ม
+        </div>
+    </section>
+
+    <section id="historySection" style="display: none;">
+        <div class="history-header">
+            <h3 data-i18n="historyTitle">📋 ประวัติการรักษาที่ผ่านมา</h3>
+            <button id="btnResetHistory" class="btn-reset-small" data-i18n="btnNewSearch">🔄 รีเซ็ต / ค้นหาใหม่</button>
+        </div>
+        <div class="table-container">
+            <table class="full-width-table">
+                <thead>
+                    <tr>
+                        <th data-i18n="thDate">วันที่</th>
+                        <th data-i18n="thSymp">อาการ</th>
+                        <th data-i18n="thMed">ยาที่ได้รับ</th>
+                        <th data-i18n="thDept">แผนก</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    </tbody>
+            </table>
         </div>
     </section>
 
@@ -69,6 +84,7 @@
                     <option value="การจัดการโลจิสติกส์">การจัดการโลจิสติกส์</option>
                     <option value="ระบบขนส่งทางราง">ระบบขนส่งทางราง</option>
                     <option value="เทคนิคพื้นฐาน">เทคนิคพื้นฐาน</option>
+
                 </select>
             </div>
             <div class="form-group">
@@ -137,14 +153,14 @@
                     <option value="ยาลดกรด แอร์เอ็กซ์">ยาลดกรด แอร์เอ็กซ์</option>
                     <option value="คาดรามาย-วี โลชั่น">คาดรามาย-วี โลชั่น</option>
                     <option value="ยาหม่องขาว">ยาหม่องขาว</option>
-                    <option value="ยาลม">ยาลม</option>
+                    <option value="ยาอม">ยาอม</option>
+                    <option value="พอนสแตน 500">พอนสแตน 500</option>
+                    <option value="คาร์บอนแก้ท้องเสีย">คาร์บอนแก้ท้องเสีย</option>
                     <option value="มายบาซิน โธร์ท (เหลือง) ยาแก้เจ็บคอ">มายบาซิน โธร์ท (เหลือง) ยาแก้เจ็บคอ</option>
                     <option value="มายบาซิน โธร์ท (ส้ม) ยาแก้เจ็บคอ">มายบาซิน โธร์ท (ส้ม) ยาแก้เจ็บคอ</option>
                     <option value="ถุงมือ ชาโตรี่">ถุงมือ ชาโตรี่</option>
                     <option value="พลาสเตอร์ปิดแผล">พลาสเตอร์ปิดแผล</option>
                     <option value="ยาหอม">ยาหอม</option>
-                    <option value="พอนสแตน 500">พอนสแตน 500</option>
-                    <option value="คาร์บอนแก้ท้องเสีย">คาร์บอนแก้ท้องเสีย</option>
                 </select>
             </div>
             <div class="form-group">
@@ -164,49 +180,7 @@
     </section>
 </div>
 
-<footer>© ระบบงานพยาบาล วิทยาลัยเทคนิคสุราษฎร์ธานี</footer>
-
-<div id="modalStats" class="modal-overlay">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('modalStats')">&times;</span>
-        <h2 id="titleStats">📊 สถิติจำนวนยาที่จ่าย (รวมทั้งหมด)</h2>
-        <div class="table-container modal-table-box">
-            <table class="full-width-table">
-                <thead>
-                    <tr>
-                        <th data-i18n="thMedName">ชื่อยา</th>
-                        <th data-i18n="thCount">จำนวนที่จ่าย (ครั้ง)</th>
-                    </tr>
-                </thead>
-                <tbody id="statsBody">
-                    <tr><td colspan="2">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div id="modalHistory" class="modal-overlay">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal('modalHistory')">&times;</span>
-        <h2 id="titleHistory">📋 ประวัติการใช้บริการของคุณ</h2>
-        <div class="table-container modal-table-box">
-            <table class="full-width-table">
-                <thead>
-                    <tr>
-                        <th data-i18n="thDate">วันที่</th>
-                        <th data-i18n="thSymp">อาการ</th>
-                        <th data-i18n="thMed">ยาที่ได้รับ</th>
-                        <th data-i18n="thDept">แผนก</th>
-                    </tr>
-                </thead>
-                <tbody id="fullHistoryBody">
-                    <tr><td colspan="4">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<footer data-i18n="footerText">© ระบบงานพยาบาล วิทยาลัยเทคนิคสุราษฎร์ธานี</footer>
 
 <script src="script.js"></script>
 </body>
