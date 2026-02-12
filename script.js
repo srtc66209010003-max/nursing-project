@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ⚠️ Script URL ของคุณ
-    const scriptURL = 'https://script.google.com/macros/s/AKfycby69houENixc-pQplsHDsu1RHkYKWuwlvF04DzG6yQfnACOAUyX8ma1o0A2TgJudd76/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxRNC-spHoAkAQL_MbduFj6H5SUnn3dirMnch6dGLDtKhyHQgk_xbfum3AaC5kypecVbQ/exec';
 
     // --- ตัวแปร Elements ---
     const fullname = document.getElementById("fullname");
@@ -279,4 +279,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     updateLanguage();
+
 });
