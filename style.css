@@ -216,6 +216,62 @@ input, select {
 }
 .active .lock-overlay { display: none; }
 
+/* --- Rating System Styles (เพิ่มส่วนนี้) --- */
+.rating-wrapper {
+    text-align: center;
+    margin: 25px 0;
+    padding: 20px;
+    background-color: #f8f9fa; /* สีพื้นหลังอ่อนๆ ให้ดูเด่นขึ้น */
+    border-radius: 12px;
+    border: 1px solid #edf0f2;
+}
+
+.rating-label {
+    font-family: 'Sarabun', sans-serif;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: block;
+    color: #555;
+    font-size: 1rem;
+}
+
+.rating-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.rating-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.rating-circle:hover {
+    border-color: #999;
+    background-color: #f0f0f0;
+}
+
+.rating-circle.active {
+    background-color: #28a745; /* สีเขียวเมื่อเลือก */
+    color: #fff;
+    border-color: #28a745;
+    transform: scale(1.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+/* -------------------------------------- */
+
 .actions {
     display: flex;
     flex-direction: column;

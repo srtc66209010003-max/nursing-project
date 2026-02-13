@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ⚠️ Script URL ของคุณ
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxRNC-spHoAkAQL_MbduFj6H5SUnn3dirMnch6dGLDtKhyHQgk_xbfum3AaC5kypecVbQ/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxXGDyPc9BCPyIrdrQo3pXZT3E56EZ9oI53_bNFMv0XUcyAuv9ofN8WUUeSIdd-VT1l/exec';
 
     // --- ตัวแปร Elements ---
     const fullname = document.getElementById("fullname");
@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnSave = document.getElementById("btnSave");
     const btnReset = document.getElementById("btnReset");
     const langBtn = document.getElementById("langBtn");
+    
+    // +++ ตัวแปรคะแนนความพึงพอใจ +++
+    const satisfactionInput = document.getElementById("satisfactionScore");
+    const ratingCircles = document.querySelectorAll(".rating-circle");
 
     let currentLang = "th"; // เริ่มต้นภาษาไทย
 
@@ -28,10 +32,14 @@ document.addEventListener("DOMContentLoaded", () => {
             phMore: "ระบุอาการเพิ่มเติม", labelMed: "ยาที่จ่าย", labelTemp: "อุณหภูมิ (°C)",
             labelWeight: "น้ำหนัก (กก.)", btnReset: "ล้างข้อมูล", btnSave: "บันทึกข้อมูลใหม่",
             optSelect: "เลือก", optSelectDept: "เลือกแผนกวิชา", optSelectSymp: "เลือกอาการหลัก",
+            
             // General
             verifySuccess: "✅ ยืนยันตัวตนสำเร็จ: คุณ",
             confirmTitle: "ตรวจสอบข้อมูล", btnConfirm: "ยืนยัน บันทึก", btnCancel: "แก้ไข",
-            saveSuccess: "บันทึกข้อมูลเรียบร้อย"
+            saveSuccess: "บันทึกข้อมูลเรียบร้อย",
+            
+            // +++ คำแปลส่วนคะแนน +++
+            labelRating: "ระดับความพึงพอใจ"
         },
         en: {
             btnText: "TH",
@@ -46,10 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
             phMore: "Specify details", labelMed: "Dispensed Medicine", labelTemp: "Temperature (°C)",
             labelWeight: "Weight (kg)", btnReset: "Clear Form", btnSave: "Save Record",
             optSelect: "Select", optSelectDept: "Select Department", optSelectSymp: "Select Symptom",
+            
             // General
             verifySuccess: "✅ Verified: ",
             confirmTitle: "Confirm Details", btnConfirm: "Confirm & Save", btnCancel: "Edit",
-            saveSuccess: "Record saved successfully."
+            saveSuccess: "Record saved successfully.",
+            
+            // +++ คำแปลส่วนคะแนน +++
+            labelRating: "Satisfaction Rating"
         }
     };
 
@@ -92,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const t = translations[currentLang];
         langBtn.innerText = t.btnText;
         
+        // แปลข้อความที่มี data-i18n
         document.querySelectorAll("[data-i18n]").forEach(el => {
             const key = el.getAttribute("data-i18n");
             if (t[key]) el.innerText = t[key];
@@ -104,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.querySelectorAll("select option").forEach(opt => {
             const val = opt.value;
-            if (opt.hasAttribute("data-i18n")) return;
+            if (opt.hasAttribute("data-i18n")) return; // ข้ามตัวเลือกที่มี data-i18n (เช่น "เลือก")
             
             if (currentLang === "en") {
                 if (optionTranslations[val]) opt.innerText = optionTranslations[val];
@@ -144,6 +157,18 @@ document.addEventListener("DOMContentLoaded", () => {
     fullname.addEventListener("input", checkIdentity);
     phone.addEventListener("input", checkIdentity);
 
+    // +++ Logic สำหรับปุ่มกดคะแนน (Rating) +++
+    ratingCircles.forEach(circle => {
+        circle.addEventListener("click", () => {
+            // ลบ class active ออกจากทุกปุ่มก่อน
+            ratingCircles.forEach(c => c.classList.remove("active"));
+            // ใส่ class active ให้ปุ่มที่ถูกกด
+            circle.classList.add("active");
+            // อัปเดตค่าลงใน input hidden
+            satisfactionInput.value = circle.getAttribute("data-value");
+        });
+    });
+
     // --- บันทึกข้อมูล (Popup รายละเอียดครบ) ---
     btnSave.addEventListener("click", () => {
         const name = fullname.value.trim();
@@ -152,6 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const temp = document.getElementById("temp").value;
         const weight = document.getElementById("weight").value;
         const moreDetails = document.getElementById("moreDetails").value;
+        const ratingScore = satisfactionInput.value; // ดึงค่าคะแนน
+        
         const t = translations[currentLang];
 
         if (!symptom) return Swal.fire("Warning", currentLang === 'th' ? "กรุณาระบุอาการหลัก" : "Please select symptom", "warning");
@@ -204,6 +231,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         <td style="padding: 4px; font-weight:bold; color:#dc3545;">${t.labelRest}:</td> 
                         <td style="padding: 4px; color:#dc3545;">${getTxt('rest')}</td>
                     </tr>
+                    
+                    ${ratingScore ? `
+                    <tr style="background-color: #fff3cd;">
+                        <td style="padding: 8px; font-weight:bold; color:#856404;">${t.labelRating}:</td> 
+                        <td style="padding: 8px; font-weight:bold; color:#856404;">⭐ ${ratingScore} / 5</td>
+                    </tr>` : ''}
                 </table>
             </div>
         `;
@@ -235,7 +268,8 @@ document.addEventListener("DOMContentLoaded", () => {
             more: document.getElementById("moreDetails").value,
             medicine: document.getElementById("medicine").value,
             temp: document.getElementById("temp").value,
-            weight: document.getElementById("weight").value
+            weight: document.getElementById("weight").value,
+            satisfaction: satisfactionInput.value // ส่งคะแนนไป Google Sheet
         };
 
         btnSave.disabled = true;
@@ -249,16 +283,22 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             Swal.fire("Success", translations[currentLang].saveSuccess, "success");
             
+            // Reset ฟอร์ม
             document.querySelectorAll("#recordSection input, #recordSection select").forEach(el => {
                 if(el.id!=='fullname' && el.id!=='phone') {
                     if (el.tagName === 'SELECT') {
                         el.selectedIndex = 0;
                         if(el.id === 'rest') el.value = "ไม่พัก";
-                    } else {
+                    } else if (el.type !== 'hidden') {
                         el.value = "";
                     }
                 }
             });
+
+            // Reset คะแนน
+            satisfactionInput.value = "";
+            ratingCircles.forEach(c => c.classList.remove("active"));
+            
             updateLanguage(); 
         } catch (error) {
             Swal.fire("Error", "Connection failed.", "error");
@@ -272,12 +312,16 @@ document.addEventListener("DOMContentLoaded", () => {
         fullname.value = ""; phone.value = "";
         document.querySelectorAll("#recordSection input, #recordSection select").forEach(el => {
             if (el.tagName === 'SELECT') el.selectedIndex = 0;
-            else el.value = "";
+            else if (el.type !== 'hidden') el.value = "";
         });
+        
+        // Reset คะแนนเมื่อกดปุ่มล้าง
+        satisfactionInput.value = "";
+        ratingCircles.forEach(c => c.classList.remove("active"));
+
         checkIdentity();
         updateLanguage();
     });
 
     updateLanguage();
-
 });

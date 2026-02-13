@@ -7,6 +7,57 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .rating-wrapper {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa; /* สีพื้นหลังจางๆ ให้ดูแยกออกมา */
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .rating-label {
+            font-family: 'Sarabun', sans-serif;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            color: #333;
+        }
+        .rating-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .rating-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .rating-circle:hover {
+            border-color: #999;
+            background-color: #f0f0f0;
+        }
+        /* เมื่อถูกเลือก */
+        .rating-circle.active {
+            background-color: #28a745; /* สีเขียว */
+            color: #fff;
+            border-color: #28a745;
+            transform: scale(1.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
 
@@ -173,6 +224,18 @@
             </div>
         </div>
 
+        <div class="rating-wrapper">
+    <label class="rating-label" data-i18n="labelRating">ระดับความพึงพอใจ</label>
+    
+    <div class="rating-container">
+        <div class="rating-circle" data-value="1">1</div>
+        <div class="rating-circle" data-value="2">2</div>
+        <div class="rating-circle" data-value="3">3</div>
+        <div class="rating-circle" data-value="4">4</div>
+        <div class="rating-circle" data-value="5">5</div>
+    </div>
+    <input type="hidden" id="satisfactionScore" name="satisfactionScore">
+</div>
         <div class="actions">
             <button type="button" class="btn-clear" id="btnReset" data-i18n="btnReset">ล้างข้อมูล</button>
             <button type="button" class="btn-save" id="btnSave" data-i18n="btnSave">บันทึกข้อมูลใหม่</button>
@@ -183,5 +246,21 @@
 <footer data-i18n="footerText">© ระบบงานพยาบาล วิทยาลัยเทคนิคสุราษฎร์ธานี</footer>
 
 <script src="script.js"></script>
+
+<script>
+    function setRating(score, element) {
+        // 1. เอาคลาส active ออกจากปุ่มทั้งหมด
+        document.querySelectorAll('.rating-circle').forEach(el => el.classList.remove('active'));
+        
+        // 2. ใส่คลาส active ให้ปุ่มที่กด (เปลี่ยนสีเป็นเขียว)
+        element.classList.add('active');
+        
+        // 3. บันทึกค่าลงใน input ที่ซ่อนอยู่
+        document.getElementById('satisfactionScore').value = score;
+        
+        console.log("คะแนนความพึงพอใจ: " + score);
+    }
+</script>
+
 </body>
 </html>
